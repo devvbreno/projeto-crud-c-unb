@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  app:
+    build:  .
+    container_name: projeto_unb_crud
+    volumes:
+      - .:/usr/src/app
+    stdin_open: true
+    tty: true

@@ -1,0 +1,13 @@
+bin/
+*.o
+*.out
+*.exe
+
+.docker/
+*.log
+
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
