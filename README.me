@@ -1,0 +1,37 @@
+Para facilitar a vida de todos nós, temos duas formas de executar o sistema:
+
+Opção A: Com Docker
+Se você tiver o docker instalado, não precisa configurar compiladores  Windows/Linux
+1. No terminal, digite: docker-compose up --build
+2. Para testar/interagir com o programa, abra outro terminal e digita: docker exec -it projeto_unb_crud ./bin/programa
+
+Opção B: Terminal loal (makefile)
+Se quiser rodar direto na sua maquina:
+1. precisa ter o gcc instalado.
+2. no terminal da pasta do projeto, digite: make run
+
+**Estrutura das pastas**
+
+organizei o projeto para ninguém "atropelar" o código do colega:
+src/: onde fica a implementação do código (.c)
+include/: onde fica os cabeçalhos (.h) é o "contrato" das nossas funções.
+bin/: Arquivos temporários e executavéis. (não mexer aqui, o makefile cuida disso).
+data/: onde os arquivos txt com dados será salvo (se necessário)
+
+**Arquitetura MVC: Quem faz o que?**
+
+Dividi o trabalho dessa forma:
+Model | model.c/h | onde fica a lógica dos dados. Manipula structs, ponteiros e etc (proibido usar printf aqui)
+View | view.c/h | Aqui é onde ficará a interface, tendo apenas os menus, printf e scanf.
+Controller | controller.c/h | Aqui é onde ficará o cérebro do projeto. Recebe input da view e chama as funções corretas da Model.
+
+Lembrando que:
+1. Sem variáveis globais
+2. Lembrem-se dos ponteiros.
+3. Cuidado com a gestão da memória.
+4. Fazer commits pequenos/limpos, para nós nos organizarmos melhor
+
+Dica pro grupo:
+Acrescentei as instruções do professor no nosso git, então quando necessário so olharem o arquivo instrucoes.md 
+Além disso, se o código não compilar, não dê push. O docker e o Makefile estão aqui para garantir que o que funciona pra um, funciona pra geral.
+Boa sorte à nós!
