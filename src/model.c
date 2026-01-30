@@ -45,4 +45,53 @@ Cliente* buscar_cliente(Cliente *lista, char *cpf) {
     return NULL; // Chegou ao fim e não achou
 }
 
-// ... Aqui viriam as funções remover e editar ...
+// Remove um cliente pelo CPF
+void remover_cliente(Cliente **lista, char *cpf) {
+    // Se a lista estiver vazia, não faz nada
+    if (*lista == NULL) {
+        return;
+    }
+
+    Cliente *atual = *lista;
+    Cliente *anterior = NULL;
+
+    // Procura o cliente na lista
+    while (atual != NULL && strcmp(atual->cpf, cpf) != 0) {
+        anterior = atual;
+        atual = atual->prox;
+    }
+
+    // Se chegou no fim e não achou (atual é NULL)
+    if (atual == NULL) {
+        return; 
+    }
+
+    // Lógica de remoção ("Costura" dos ponteiros)
+    if (anterior == NULL) {
+        // CASO 1: O cliente a remover é o PRIMEIRO da lista
+        // O início da lista passa a ser o segundo elemento
+        *lista = atual->prox;
+    } else {
+        // CASO 2: O cliente está no MEIO ou no FIM
+        // O anterior pula o atual e aponta para o próximo
+        anterior->prox = atual->prox;
+    }
+
+    // IMPORTANTE: Liberar a memória do nó removido
+    free(atual);
+}
+
+// Edita nome e telefone de um cliente existente
+// Retorna 1 se editou, 0 se não encontrou (para controle de erro na View)
+int editar_cliente(Cliente *lista, char *cpf, char *novo_nome, char *novo_telefone) {
+    // Reutilizamos a função de busca que você já fez!
+    Cliente *alvo = buscar_cliente(lista, cpf);
+    
+    if (alvo != NULL) {
+        strcpy(alvo->nome, novo_nome);
+        strcpy(alvo->telefone, novo_telefone);
+        return 1; // Sucesso
+    }
+    return 0; // Não achou
+}
+
