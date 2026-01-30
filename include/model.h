@@ -25,4 +25,13 @@ void editar_cliente(Cliente *lista, char *cpf, char *novo_nome, char *novo_telef
 
 // ESPAÇO RESERVADO PARA GERENCIAMENTO DE COMPRA (CARRINHO): BRENO ELIAS DE CARVALHO CORREIA - 242028815 ---
 
+typedef struct ItemCarrinho {
+    int codigo_produto;
+    int qtd_comprada;
+    struct ItemCarrinho *prox;
+} ItemCarrinho;
+
+void adicionar_ao_carrinho(Cliente *cliente, Produto *produto, int qtd);
+void calcular_total_carrinho(Cliente *cliente, Produto *lista_produtos);
+
 #endif
