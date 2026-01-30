@@ -90,7 +90,7 @@ void menu_editar_cliente(Cliente *lista) {
     printf("Dados atualizados com sucesso!\n");
 }
 
-//
+// ESPAÇO PARA GERENCIAMENTO DE PRODUTOS: ABRAÃO PEREIRA DIAS - 202045384 ---
 
 void menu_cadastrar_produto(Produto **lista) {
     int codigo;
@@ -129,3 +129,4 @@ void menu_listar_produtos(Produto *lista) {
         atual = atual->prox;
     }
 }
+
