@@ -21,7 +21,21 @@ void editar_cliente(Cliente *lista, char *cpf, char *novo_nome, char *novo_telef
 
 // --- FIM DO ESPAÇO GERENCIAMENTO DE CLIENTES ---
 
-// ESPAÇO RESERVADO PARA GERENCIAMENTO DE PRODUTOS: ABRAÃO PEREIRA DIAS - 202045384 ---
+// ESPAÇO PARA GERENCIAMENTO DE PRODUTOS: ABRAÃO PEREIRA DIAS - 202045384 ---
+
+typedef struct Produto {
+    int codigo;         // Identificador único (número)
+    char nome[50];
+    float preco;        // Valor monetário
+    struct Produto *prox; // Ponteiro para o próximo produto
+} Produto;
+
+// Protótipos
+void adicionar_produto(Produto **lista, int codigo, char *nome, float preco);
+void listar_produtos(Produto *lista);
+Produto* buscar_produto(Produto *lista, int codigo);
+void remover_produto(Produto **lista, int codigo);
+int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco);
 
 // ESPAÇO RESERVADO PARA GERENCIAMENTO DE COMPRA (CARRINHO): BRENO ELIAS DE CARVALHO CORREIA - 242028815 ---
 
@@ -35,3 +49,4 @@ void adicionar_ao_carrinho(Cliente *cliente, Produto *produto, int qtd);
 void calcular_total_carrinho(Cliente *cliente, Produto *lista_produtos);
 
 #endif
+
