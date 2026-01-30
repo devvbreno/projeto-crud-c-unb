@@ -46,3 +46,46 @@ void menu_listar_clientes(Cliente *lista) {
         atual = atual->prox;
     }
 }
+
+void menu_remover_cliente(Cliente **lista) {
+    char cpf[15];
+    printf("\n--- Remover Cliente ---\n");
+    printf("Digite o CPF do cliente a remover: ");
+    ler_texto(cpf, 15);
+
+    // Verifica se existe antes de tentar remover (opcional, mas amigável)
+    if (buscar_cliente(*lista, cpf) == NULL) {
+        printf("Erro: Cliente nao encontrado.\n");
+        return;
+    }
+
+    remover_cliente(lista, cpf);
+    printf("Cliente removido com sucesso!\n");
+}
+
+void menu_editar_cliente(Cliente *lista) {
+    char cpf[15], novo_nome[50], novo_telefone[15];
+    
+    printf("\n--- Editar Cliente ---\n");
+    printf("Digite o CPF do cliente que deseja alterar: ");
+    ler_texto(cpf, 15);
+
+    // Busca para ver se existe e mostra os dados atuais
+    Cliente *atual = buscar_cliente(lista, cpf);
+    if (atual == NULL) {
+        printf("Erro: Cliente nao encontrado.\n");
+        return;
+    }
+
+    printf("Editando cliente: %s\n", atual->nome);
+    
+    printf("Novo Nome: ");
+    ler_texto(novo_nome, 50);
+    
+    printf("Novo Telefone: ");
+    ler_texto(novo_telefone, 15);
+
+    // Chama a model
+    editar_cliente(lista, cpf, novo_nome, novo_telefone);
+    printf("Dados atualizados com sucesso!\n");
+}
