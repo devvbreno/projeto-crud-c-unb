@@ -95,3 +95,56 @@ int editar_cliente(Cliente *lista, char *cpf, char *novo_nome, char *novo_telefo
     return 0; // Não achou
 }
 
+// --- IMPLEMENTAÇÃO DO GERENCIAMENTO DE PRODUTOS: SAMUEL CAMPOS ROCHA - 211031824 ---
+
+// --- IMPLEMENTAÇÃO DO MEMBRO 2 ---
+
+void adicionar_produto(Produto **lista, int codigo, char *nome, float preco) {
+    // 1. Alocação Dinâmica (Obrigatório)
+    Produto *novo = (Produto*) malloc(sizeof(Produto));
+    if (novo == NULL) return;
+
+    // 2. Preenchimento
+    novo->codigo = codigo;
+    strcpy(novo->nome, nome);
+    novo->preco = preco;
+    novo->prox = NULL;
+
+    // 3. Inserção no final da lista
+    if (*lista == NULL) {
+        *lista = novo;
+    } else {
+        Produto *atual = *lista;
+        while (atual->prox != NULL) {
+            atual = atual->prox;
+        }
+        atual->prox = novo;
+    }
+}
+
+// Busca por código numérico
+Produto* buscar_produto(Produto *lista, int codigo) {
+    Produto *atual = lista;
+    while (atual != NULL) {
+        if (atual->codigo == codigo) {
+            return atual;
+        }
+        atual = atual->prox;
+    }
+    return NULL;
+}
+
+// Edita dados de um produto existente
+int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco) {
+    Produto *alvo = buscar_produto(lista, codigo);
+    if (alvo != NULL) {
+        strcpy(alvo->nome, novo_nome);
+        alvo->preco = novo_preco; // Atualiza o float
+        return 1; // Sucesso
+    }
+    return 0; // Não encontrado
+}
+
+// A função remover_produto segue a mesma lógica de ponteiros do gerenciamento de clientes,
+// apenas trocando a comparação de strings (strcmp) pela comparação de inteiros (==).
+
