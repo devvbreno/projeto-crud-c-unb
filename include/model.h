@@ -24,19 +24,30 @@ void editar_cliente(Cliente *lista, char *cpf, char *novo_nome, char *novo_telef
 
 // ESPAÇO PARA GERENCIAMENTO DE PRODUTOS: ABRAÃO PEREIRA DIAS - 202045384 ---
 
-typedef struct Produto {
-    int codigo;         // Identificador único (número)
+typedef struct Produto{
+    int codigo; // Código de Identificação do produto
     char nome[50];
-    float preco;        // Valor monetário
+    float preco; // Valor do produto
+    int quantidade; // Quantidade do Produto em estoque
     struct Produto *prox; // Ponteiro para o próximo produto
 } Produto;
 
-// Protótipos
-void adicionar_produto(Produto **lista, int codigo, char *nome, float preco);
+// Funções 
+// Observação: 'lista' é ponteiro para ponteiro (Produto**) quando precisa alterar o início (adicionar/remover)
+
+// Adiciona um novo produto à lista
+// Retorna 1 se sucesso, 0 se erro (memória ou código duplicado)
+int adicionar_produto(Produto **lista, int codigo, char *nome, float preco, int quantidade);
+// Lista todos os produtos (apenas leitura, então ponteiro simples)
 void listar_produtos(Produto *lista);
+// Busca um produto pelo código
 Produto* buscar_produto(Produto *lista, int codigo);
+// Remove um produto da lista
 void remover_produto(Produto **lista, int codigo);
-int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco);
+// Edita os dados de um produto existente
+int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco, int nova_qtd);
+// Libera toda a memória da lista ao fechar o programa
+void liberar_lista_produtos(Produto **lista);
 
 // ESPAÇO RESERVADO PARA GERENCIAMENTO DE COMPRA (CARRINHO): BRENO ELIAS DE CARVALHO CORREIA - 242028815 ---
 
