@@ -149,3 +149,30 @@ int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco
 // apenas trocando a comparação de strings (strcmp) pela comparação de inteiros (==).
 
 
+// Gerenciamento do sistema - Modo Compra (Breno Elias)
+
+void liberar_sistema(Cliente **lista_c, Produto **lista_p) {
+    Cliente *c_atual = *lista_c;
+    while (c_atual != NULL) {
+        Cliente *aux_c = c_atual;
+        c_atual = c_atual ->prox;
+
+        ItemCarrinho *i_atual = aux_c ->carrinho;
+        while (i_atual != NULL){
+            ItemCarrinho *aux_i = i_atual;
+            i_atual = i_atual ->prox;
+            free(aux_i); // libera o item do carrinho
+        }
+        free(aux_c); // libera o cliente
+    }
+    *lista_c = NULL;
+
+    Produto *p_atual = *lista_p;
+    while (p_atual != NULL) {
+        Produto *aux_p = p_atual;
+        p_atual = p_atual->prox;
+        free(aux_p); // libera o produto
+    }
+    *lista_p = NULL;
+    *lista_c = NULL;
+}
