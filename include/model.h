@@ -3,24 +3,34 @@
 
 // --- ESPAÇO GERENCIAMENTO DE CLIENTES: SAMUEL CAMPOS ROCHA - 211031824 ---
 
-// Definição do Cliente (Nó da Lista Encadeada)
+// Estrutura do Cliente (Nó da Lista)
 typedef struct Cliente {
     char cpf[15];       // Chave primária
     char nome[50];
+    char email[80];    
+    char data_nasc[15]; // (DD/MM/AAAA)
     char telefone[15];
-    ItemCarrinho *carrinho; // o ponteiro para a sublista de compras
-    struct Cliente *prox; // Ponteiro para o próximo cliente (Lista Encadeada)
+    struct Cliente *prox; // Ponteiro para lista encadeada
 } Cliente;
 
-// Protótipos das funções (O que o código faz)
-// Note que passamos ponteiro de ponteiro (**lista) para poder alterar o início da lista se necessário
-void adicionar_cliente(Cliente **lista, char *cpf, char *nome, char *telefone);
-void listar_clientes(Cliente *lista); // Aqui só lê, não precisa de **
-Cliente* buscar_cliente(Cliente *lista, char *cpf);
-void remover_cliente(Cliente **lista, char *cpf);
-void editar_cliente(Cliente *lista, char *cpf, char *novo_nome, char *novo_telefone);
+// --- Protótipos das Funções (Lógica Pura) ---
 
-// --- FIM DO ESPAÇO GERENCIAMENTO DE CLIENTES ---
+// Adiciona um novo cliente ao final da lista
+void adicionar_cliente(Cliente **lista, char *cpf, char *nome, char *email, char *data_nasc, char *telefone);
+
+// Busca um cliente pelo CPF (Retorna o ponteiro ou NULL)
+Cliente* buscar_cliente(Cliente *lista, char *cpf);
+
+// Remove um cliente da lista e libera a memória
+int remover_cliente(Cliente **lista, char *cpf);
+
+// Edita os dados de um cliente existente
+int editar_cliente(Cliente *lista, char *cpf, char *novo_nome, char *novo_email, char *nova_data, char *novo_telefone);
+
+// Libera toda a lista da memória (para fechar o programa)
+void liberar_lista_clientes(Cliente **lista);
+
+#endif
 
 // ESPAÇO PARA GERENCIAMENTO DE PRODUTOS: ABRAÃO PEREIRA DIAS - 202045384 ---
 
@@ -61,5 +71,6 @@ void adicionar_ao_carrinho(Cliente *cliente, Produto *produto, int qtd);
 void calcular_total_carrinho(Cliente *cliente, Produto *lista_produtos);
 
 #endif
+
 
 
