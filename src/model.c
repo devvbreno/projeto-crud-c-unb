@@ -95,7 +95,7 @@ int editar_cliente(Cliente *lista, char *cpf, char *novo_nome, char *novo_telefo
     return 0; // Não achou
 }
 
-// --- IMPLEMENTAÇÃO DO GERENCIAMENTO DE PRODUTOS: SAMUEL CAMPOS ROCHA - 211031824 ---
+// ESPAÇO PARA GERENCIAMENTO DE PRODUTOS: ABRAÃO PEREIRA DIAS - 202045384 ---
 
 // --- IMPLEMENTAÇÃO DO MEMBRO 2 ---
 
@@ -147,4 +147,5 @@ int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco
 
 // A função remover_produto segue a mesma lógica de ponteiros do gerenciamento de clientes,
 // apenas trocando a comparação de strings (strcmp) pela comparação de inteiros (==).
+
 
