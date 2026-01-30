@@ -26,7 +26,7 @@ void editar_cliente(Cliente *lista, char *cpf, char *novo_nome, char *novo_telef
 
 typedef struct Produto{
     int codigo; // Código de Identificação do produto
-    char nome[50];
+    char nome[50]; // Nome do Produto
     float preco; // Valor do produto
     int quantidade; // Quantidade do Produto em estoque
     struct Produto *prox; // Ponteiro para o próximo produto
@@ -61,4 +61,5 @@ void adicionar_ao_carrinho(Cliente *cliente, Produto *produto, int qtd);
 void calcular_total_carrinho(Cliente *cliente, Produto *lista_produtos);
 
 #endif
+
 
