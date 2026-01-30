@@ -8,6 +8,7 @@ typedef struct Cliente {
     char cpf[15];       // Chave primária
     char nome[50];
     char telefone[15];
+    ItemCarrinho *carrinho; // o ponteiro para a sublista de compras
     struct Cliente *prox; // Ponteiro para o próximo cliente (Lista Encadeada)
 } Cliente;
 
