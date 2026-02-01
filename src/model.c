@@ -93,18 +93,25 @@ void liberar_lista_clientes(Cliente **lista) {
 
 // --- IMPLEMENTAÇÃO DO MEMBRO 2 ---
 
-void adicionar_produto(Produto **lista, int codigo, char *nome, float preco) {
-    // 1. Alocação Dinâmica (Obrigatório)
-    Produto *novo = (Produto*) malloc(sizeof(Produto));
-    if (novo == NULL) return;
+int adicionar_produto(Produto **lista, int codigo, char *nome, float preco, int quantidade) {
+    
+    // CORREÇÃO 1: Verifica se o código já existe (Regra do "Código Único")
+    if (buscar_produto(*lista, codigo) != NULL) {
+        return 0; // Erro: Duplicado
+    }
 
-    // 2. Preenchimento
+    // 1. Alocação Dinâmica
+    Produto *novo = (Produto*) malloc(sizeof(Produto));
+    if (novo == NULL) return 0; // Erro: Falta memória
+
+    // 2. Preenchimento (Incluindo Quantidade!)
     novo->codigo = codigo;
     strcpy(novo->nome, nome);
     novo->preco = preco;
+    novo->quantidade = quantidade; // <-- Requisito que faltava
     novo->prox = NULL;
 
-    // 3. Inserção no final da lista
+    // 3. Inserção (Mantive a lógica dele de inserir no fim, se preferirem a ordem cronológica)
     if (*lista == NULL) {
         *lista = novo;
     } else {
@@ -114,9 +121,10 @@ void adicionar_produto(Produto **lista, int codigo, char *nome, float preco) {
         }
         atual->prox = novo;
     }
+    
+    return 1; // Sucesso
 }
 
-// Busca por código numérico
 Produto* buscar_produto(Produto *lista, int codigo) {
     Produto *atual = lista;
     while (atual != NULL) {
@@ -128,15 +136,17 @@ Produto* buscar_produto(Produto *lista, int codigo) {
     return NULL;
 }
 
-// Edita dados de um produto existente
-int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco) {
+// CORREÇÃO 2: Adicionei a edição da Quantidade
+int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco, int nova_qtd) {
     Produto *alvo = buscar_produto(lista, codigo);
     if (alvo != NULL) {
-        strcpy(alvo->nome, novo_nome);
-        alvo->preco = novo_preco; // Atualiza o float
-        return 1; // Sucesso
+        // Só atualiza se o usuário mandou dados válidos
+        if (strlen(novo_nome) > 0) strcpy(alvo->nome, novo_nome);
+        if (novo_preco >= 0) alvo->preco = novo_preco;
+        if (nova_qtd >= 0) alvo->quantidade = nova_qtd; // <-- Edita qtd
+        return 1; 
     }
-    return 0; // Não encontrado
+    return 0; 
 }
 
 // A função remover_produto segue a mesma lógica de ponteiros do gerenciamento de clientes,
@@ -150,3 +160,4 @@ void liberar_sistema(Cliente **lista_c, Produto **lista_p) {
     liberar_lista_clientes(lista_c); // chama a parte do Samuel
     liberar_lista_produtos(lista_p); // chama a parte do Abraão
 }
+
