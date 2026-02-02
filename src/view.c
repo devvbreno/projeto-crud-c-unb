@@ -155,3 +155,130 @@ void menu_gerenciar_clientes(Cliente **lista) {
         }
     } while (opcao != 0);
 }
+
+// --- ESPAÇO DE GERENCIAMENTO DE PRODUTOS: Abraão Pereira Dias 202045384 --
+
+void listar_todos_produtos(Produto *lista) {
+    if (lista == NULL) {
+        printf("\nNenhum produto cadastrado.\n");
+        return;
+    }
+    printf("\n--- LISTA DE PRODUTOS ---\n");
+    Produto *atual = lista;
+    while (atual != NULL) {
+        printf("ID: %d | Nome: %s\n", atual->codigo, atual->nome);
+        printf("Preco: R$ %.2f | Qtd: %d\n", atual->preco, atual->quantidade);
+        printf("----------------------------------------------------\n");
+        atual = atual->prox; // Agora acessa o proximo corretamente
+    }
+}
+
+void menu_cadastrar_produto(Produto **lista) {
+    int codigo, quantidade;
+    float preco;
+    char nome[50];
+
+    printf("\n--- NOVO PRODUTO ---\n");
+    
+    printf("Codigo (ID): ");
+    scanf("%d", &codigo);
+    getchar(); // Limpa buffer do enter
+
+    // Validação visual antes de tentar inserir
+    if (buscar_produto(*lista, codigo) != NULL) {
+        printf("Erro: Codigo ja cadastrado!\n");
+        return;
+    }
+
+    printf("Nome: ");
+    ler_texto(nome, 50); // Reutiliza a função auxiliar do Samuel
+
+    printf("Preco: ");
+    scanf("%f", &preco);
+
+    printf("Quantidade: ");
+    scanf("%d", &quantidade);
+    getchar(); // Limpa buffer
+
+    // Chama sua função do model.c
+    if (adicionar_produto(lista, codigo, nome, preco, quantidade)) {
+        printf(">> Produto cadastrado com sucesso!\n");
+    } else {
+        printf("Erro: Falha ao cadastrar (Memoria cheia ou ID duplicado).\n");
+    }
+}
+
+void menu_editar_produto_view(Produto *lista) {
+    int codigo, nova_qtd;
+    float novo_preco;
+    char novo_nome[50];
+
+    printf("\n--- EDITAR PRODUTO ---\n");
+    printf("Informe o Codigo do produto: ");
+    scanf("%d", &codigo);
+    getchar();
+
+    if (buscar_produto(lista, codigo) == NULL) {
+        printf("Erro: Produto nao encontrado.\n");
+        return;
+    }
+
+    printf("Novos Dados (Digite para substituir):\n");
+    
+    printf("Novo Nome: ");
+    ler_texto(novo_nome, 50);
+
+    printf("Novo Preco (digite -1 para manter): ");
+    scanf("%f", &novo_preco);
+
+    printf("Nova Quantidade (digite -1 para manter): ");
+    scanf("%d", &nova_qtd);
+    getchar();
+
+    if (editar_produto(lista, codigo, novo_nome, novo_preco, nova_qtd)) {
+        printf(">> Dados do produto atualizados!\n");
+    } else {
+        printf("Erro ao atualizar.\n");
+    }
+}
+
+void menu_remover_produto_view(Produto **lista) {
+    int codigo;
+    printf("\n--- REMOVER PRODUTO ---\n");
+    printf("Informe o Codigo: ");
+    scanf("%d", &codigo);
+    getchar();
+
+    if (remover_produto(lista, codigo)) {
+        printf(">> Produto removido com sucesso!\n");
+    } else {
+        printf("Erro: Produto nao encontrado.\n");
+    }
+}
+
+// Menu Principal do módulo de Produtos
+void menu_gerenciar_produtos(Produto **lista) {
+    int opcao;
+    do {
+        printf("\n=== GESTAO DE PRODUTOS ===\n");
+        printf("1. Cadastrar Produto\n");
+        printf("2. Listar Produtos\n");
+        printf("3. Editar Produto\n");
+        printf("4. Remover Produto\n");
+        printf("0. Voltar\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+        getchar(); // Limpar buffer
+
+        switch(opcao) {
+            case 1: menu_cadastrar_produto(lista); break;
+            case 2: listar_todos_produtos(*lista); break;
+            case 3: menu_editar_produto_view(*lista); break;
+            case 4: menu_remover_produto_view(lista); break;
+            case 0: break;
+            default: printf("Opcao invalida!\n");
+        }
+    } while (opcao != 0);
+}
+
+
