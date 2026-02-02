@@ -89,9 +89,9 @@ void liberar_lista_clientes(Cliente **lista) {
     *lista = NULL;
 }
 
-// ESPAÇO PARA GERENCIAMENTO DE PRODUTOS: ABRAÃO PEREIRA DIAS - 202045384 ---
+// ESPAÇO PARA GERENCIAMENTO DE PRODUTOS: Abraão Pereira Dias - 202045384 ---
 
-// --- IMPLEMENTAÇÃO DO MEMBRO 2 ---
+
 
 int adicionar_produto(Produto **lista, int codigo, char *nome, float preco, int quantidade) {
     
@@ -160,4 +160,5 @@ void liberar_sistema(Cliente **lista_c, Produto **lista_p) {
     liberar_lista_clientes(lista_c); // chama a parte do Samuel
     liberar_lista_produtos(lista_p); // chama a parte do Abraão
 }
+
 
