@@ -17,7 +17,7 @@ void adicionar_cliente(Cliente **lista, char *cpf, char *nome, char *email, char
     strcpy(novo->data_nasc, data_nasc);
     strcpy(novo->telefone, telefone);
     novo->prox = NULL;
-
+    novo->carrinho = NULL; // evita que o programa leia lixo de memoria
     // 3. Inserção na lista
     if (*lista == NULL) {
         *lista = novo; // Lista estava vazia
@@ -80,15 +80,22 @@ int editar_cliente(Cliente *lista, char *cpf, char *novo_nome, char *novo_email,
 
 void liberar_lista_clientes(Cliente **lista) {
     Cliente *atual = *lista;
-    Cliente *prox_node;
     while (atual != NULL) {
-        prox_node = atual->prox;
+        Cliente *proximo = atual->prox;
+        
+        ItemCarrinho *item = atual->carrinho;
+        while (item != NULL) {
+            ItemCarrinho *prox_item = item->prox;
+            free(item);
+            item = prox_item;
+        }
+        
         free(atual);
-        atual = prox_node;
+        atual = proximo;
     }
     *lista = NULL;
+    // acrescentei limpar o carrinho de cada cliente
 }
-
 // ESPAÇO PARA GERENCIAMENTO DE PRODUTOS: Abraão Pereira Dias - 202045384 ---
 
 
@@ -152,6 +159,7 @@ int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco
 // A função remover_produto segue a mesma lógica de ponteiros do gerenciamento de clientes,
 // apenas trocando a comparação de strings (strcmp) pela comparação de inteiros (==).
 
+// para compilar o código ele pede as funções remover_produto e liberar_lista_produtpos
 
 // Gerenciamento do sistema - Modo Compra (Breno Elias)
 
@@ -161,4 +169,45 @@ void liberar_sistema(Cliente **lista_c, Produto **lista_p) {
     liberar_lista_produtos(lista_p); // chama a parte do Abraão
 }
 
+void adicionar_ao_carrinho(Cliente *cliente, Produto *produto, int qtd) {
+    if (cliente == NULL || produto == NULL || qtd <= 0) return;
 
+    // alocação dinamica
+    ItemCarrinho *novo = (ItemCarrinho*) malloc(sizeof(ItemCarrinho));
+    if (novo == NULL) return;
+
+    novo->codigo_produto = produto->codigo;
+    novo->qtd_comprada = qtd;
+
+    // inserção
+    novo->prox = cliente->carrinho;
+    cliente->carrinho = novo;
+
+    // atualiza
+    produto->quantidade -= qtd;
+}
+
+void calcular_total_carrinho(Cliente *cliente, Produto *lista_produtos) {
+    if (cliente == NULL || cliente->carrinho == NULL) {
+        printf("\nCarrinho de %s está vazio.\n", cliente->nome);
+        return;
+    }
+
+    float total_geral = 0;
+    ItemCarrinho *atual = cliente->carrinho;
+
+    printf("\n--- Extrato de Compras: %s ---\n", cliente->nome);
+    while (atual != NULL) {
+        // busca o produto para saber o nome e o preço atual
+        Produto *p = buscar_produto(lista_produtos, atual->codigo_produto);
+        if (p != NULL) {
+            float subtotal = p->preco * atual->qtd_comprada;
+            printf("- %s (Cód: %d) | Qtd: %d | Unit: R$ %.2f | Subtotal: R$ %.2f\n", 
+                   p->nome, p->codigo, atual->qtd_comprada, p->preco, subtotal);
+            total_geral += subtotal;
+        }
+        atual = atual->prox;
+    }
+    printf("-------------------------------------------\n");
+    printf("VALOR TOTAL DA COMPRA: R$ %.2f\n", total_geral);
+}

@@ -59,20 +59,13 @@ void listar_produtos(Produto *lista);
 // Busca um produto pelo código
 Produto* buscar_produto(Produto *lista, int codigo);
 // Remove um produto da lista
-void remover_produto(Produto **lista, int codigo);
+int remover_produto(Produto **lista, int codigo);
 // Edita os dados de um produto existente
 int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco, int nova_qtd);
 // Libera toda a memória da lista ao fechar o programa
 void liberar_lista_produtos(Produto **lista);
 
 // ESPAÇO RESERVADO PARA GERENCIAMENTO DE COMPRA (CARRINHO): BRENO ELIAS DE CARVALHO CORREIA - 242028815 ---
-
-// typedef struct ItemCarrinho {
-//     int codigo_produto;
-//     int qtd_comprada;
-//     struct ItemCarrinho *prox;
-// } ItemCarrinho;
-// Função de integração que você criou na main
 
 void liberar_sistema(Cliente **lista_c, Produto **lista_p);
 void adicionar_ao_carrinho(Cliente *cliente, Produto *produto, int qtd);

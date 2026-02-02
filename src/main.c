@@ -5,13 +5,12 @@
 
 int main() {
     // inicializa as listas
-    Cliente *listar_clientes = NULL;
-    Produto *listar_produtos = NULL;
+    Cliente *lista_c = NULL;
+    Produto *lista_p = NULL;
 
     // o loop do menu deve ser chamado aqui
-    menu_principal(&listar_clientes, &listar_produtos);
-
-    liberar_sistema(&listar_clientes, &listar_produtos);
+    menu_principal(&lista_c, &lista_p);
+    liberar_sistema(&lista_c, &lista_p);
 
     printf ("\n Sistema encerrado com seguranca. \n");
     return 0; 
