@@ -281,4 +281,39 @@ void menu_gerenciar_produtos(Produto **lista) {
     } while (opcao != 0);
 }
 
+// --- MENU PRINCIPAL DO SISTEMA ---
+void menu_principal(Cliente **lista_c, Produto **lista_p) {
+    int opcao;
+    do {
+        printf("\n==================================\n");
+        printf("      SISTEMA DE VENDAS UNB       \n");
+        printf("==================================\n");
+        printf("1. Gerenciar Clientes\n");
+        printf("2. Gerenciar Produtos\n"); // <--- SUA PARTE AQUI
+        printf("3. Realizar Venda (Beta)\n");
+        printf("0. Sair\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+        getchar(); // Limpar buffer
+
+        switch(opcao) {
+            case 1:
+                menu_gerenciar_clientes(lista_c);
+                break;
+            case 2:
+                // Passa a lista de produtos para o seu menu
+                menu_gerenciar_produtos(lista_p);
+                break;
+            case 3:
+                printf("Modulo de Vendas em desenvolvimento...\n");
+                // Futuramente chamara: processar_compra(...);
+                break;
+            case 0:
+                printf("Encerrando sistema...\n");
+                break;
+            default:
+                printf("Opcao invalida!\n");
+        }
+    } while (opcao != 0);
+}
 
