@@ -162,7 +162,32 @@ int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco
 // para compilar o código ele pede as funções remover_produto e liberar_lista_produtpos
 
 // Gerenciamento do sistema - Modo Compra (Breno Elias)
+void liberar_lista_produtos(Produto **lista) {
+    Produto *atual = *lista;
+    while (atual != NULL) {
+        Produto *temp = atual;
+        atual = atual->prox;
+        free(temp);
+    }
+    *lista = NULL;
+}
 
+void remover_produto(Produto **lista, int codigo) {
+    if (*lista == NULL) return;
+    Produto *atual = *lista, *anterior = NULL;
+
+    while (atual != NULL && atual->codigo != codigo) {
+        anterior = atual;
+        atual = atual->prox;
+    }
+
+    if (atual == NULL) return;
+
+    if (anterior == NULL) *lista = atual->prox;
+    else anterior->prox = atual->prox;
+
+    free(atual);
+}
 
 void liberar_sistema(Cliente **lista_c, Produto **lista_p) {
     liberar_lista_clientes(lista_c); // chama a parte do Samuel

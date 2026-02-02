@@ -59,7 +59,7 @@ void listar_produtos(Produto *lista);
 // Busca um produto pelo código
 Produto* buscar_produto(Produto *lista, int codigo);
 // Remove um produto da lista
-int remover_produto(Produto **lista, int codigo);
+void remover_produto(Produto **lista, int codigo);
 // Edita os dados de um produto existente
 int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco, int nova_qtd);
 // Libera toda a memória da lista ao fechar o programa
