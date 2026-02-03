@@ -345,6 +345,7 @@ void menu_vendas(Cliente **lista_c, Produto **lista_p) {
     Cliente *c = buscar_cliente(*lista_c, cpf);
     if (c == NULL) {
         printf("%s[ERRO] Cliente nao encontrado!%s\n", COR_ERRO, COR_RESET);
+        esperar_enter();
         return;
     }
 
@@ -417,3 +418,4 @@ void menu_principal(Cliente **lista_c, Produto **lista_p) {
         }
     } while (opcao != 0);
 }
+
