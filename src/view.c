@@ -383,7 +383,7 @@ void menu_principal(Cliente **lista_c, Produto **lista_p) {
         printf("##################################\n");
         printf("1. Gerenciar Clientes\n");
         printf("2. Gerenciar Produtos\n");
-        printf("3. Realizar Venda (Beta)\n");
+        printf("3. Realizar Venda\n");
         printf("0. Sair\n");
         printf("----------------------------------\n");
         printf("Escolha: ");
@@ -410,3 +410,4 @@ void menu_principal(Cliente **lista_c, Produto **lista_p) {
         }
     } while (opcao != 0);
 }
+
