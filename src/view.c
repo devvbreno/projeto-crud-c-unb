@@ -286,7 +286,7 @@ void menu_principal(Cliente **lista_c, Produto **lista_p) {
     int opcao;
     do {
         printf("\n==================================\n");
-        printf("      SISTEMA DE VENDAS UNB       \n");
+        printf("      SISTEMA DE VENDAS       \n");
         printf("==================================\n");
         printf("1. Gerenciar Clientes\n");
         printf("2. Gerenciar Produtos\n"); // <--- SUA PARTE AQUI
@@ -316,4 +316,5 @@ void menu_principal(Cliente **lista_c, Produto **lista_p) {
         }
     } while (opcao != 0);
 }
+
 
