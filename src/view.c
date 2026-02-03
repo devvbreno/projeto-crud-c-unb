@@ -2,17 +2,26 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <locale.h> // Necessário para acentos
+#include <locale.h> // Para acentos
 #include "../include/view.h"
 #include "../include/model.h"
 
-// ESPAÇO DE GERENCIAMENTO DE CLIENTES: SAMUEL CAMPOS ROCHA - 211031824 ---
-// --- FUNÇÕES AUXILIARES ---
+// --- FUNÇÕES AUXILIARES DE TELA ---
 
-// Configura o idioma para permitir acentos (chamar no main se necessário)
-void configurar_idioma() {
-    setlocale(LC_ALL, "Portuguese");
+void limpar_tela() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
 }
+
+void esperar_enter() {
+    printf("\n>> Pressione ENTER para continuar...");
+    getchar(); // Espera o usuário ler a mensagem
+}
+
+// --- OUTRAS FUNÇÕES AUXILIARES ---
 
 void ler_texto(char *buffer, int tamanho) {
     fgets(buffer, tamanho, stdin);
@@ -22,7 +31,7 @@ void ler_texto(char *buffer, int tamanho) {
     }
 }
 
-// Verifica se uma string contém apenas números
+// Verifica se string contém apenas números
 int eh_numerico(char *str) {
     for (int i = 0; str[i] != '\0'; i++) {
         if (!isdigit(str[i])) return 0;
@@ -30,12 +39,10 @@ int eh_numerico(char *str) {
     return 1;
 }
 
-// Valida ano bissexto
 int eh_bissexto(int ano) {
     return (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0);
 }
 
-// Valida formato e existência da data
 int validar_data(char *data) {
     if (strlen(data) != 10 || data[2] != '/' || data[5] != '/') return 0;
     
@@ -54,7 +61,7 @@ int validar_data(char *data) {
     return 1;
 }
 
-// --- MENUS DO MEMBRO 1 ---
+// --- MENUS DE CLIENTES (SAMUEL CAMPOS ROCHA) ---
 
 void listar_todos_clientes(Cliente *lista) {
     printf("\n==================================\n");
@@ -62,7 +69,7 @@ void listar_todos_clientes(Cliente *lista) {
     printf("==================================\n");
     
     if (lista == NULL) {
-        printf(">> Nenhum cliente cadastrado no momento.\n");
+        printf(">> Nenhum cliente cadastrado.\n");
         return;
     }
 
@@ -80,14 +87,11 @@ void listar_todos_clientes(Cliente *lista) {
 void menu_cadastrar_cliente(Cliente **lista) {
     char cpf[15], nome[50], email[80], data[15], tel[15];
 
-    printf("\n==================================\n");
-    printf("        NOVO CLIENTE              \n");
-    printf("==================================\n");
-    printf("(Digite '0' no CPF para cancelar)\n\n");
+    printf("\n--- NOVO CLIENTE (Digite 0 para Cancelar) ---\n");
 
-    // Validação de CPF (Loop até digitar certo ou cancelar)
+    // Loop de validação do CPF
     while (1) {
-        printf("CPF (somente números, 11 dígitos): ");
+        printf("CPF (apenas números, 11 dígitos): ");
         ler_texto(cpf, 15);
 
         // Opção de Cancelar
@@ -96,19 +100,19 @@ void menu_cadastrar_cliente(Cliente **lista) {
             return; 
         }
 
-        // Validação: Tamanho 11 e Apenas Números
+        // Validação de Formato
         if (strlen(cpf) != 11 || !eh_numerico(cpf)) {
             printf("   [!] Erro: O CPF deve conter exatamente 11 dígitos numéricos.\n");
             continue;
         }
 
-        // Validação: Verificar duplicidade
+        // Validação de Duplicidade
         if (buscar_cliente(*lista, cpf) != NULL) {
-            printf("   [!] Erro: Este CPF já está cadastrado!\n");
+            printf("   [!] Erro: CPF já cadastrado!\n");
             return;
         }
         
-        break; // Sai do loop se tudo estiver ok
+        break; // Sai do loop se estiver ok
     }
 
     printf("Nome Completo: ");
@@ -121,7 +125,7 @@ void menu_cadastrar_cliente(Cliente **lista) {
         printf("Data de Nascimento (DD/MM/AAAA): ");
         ler_texto(data, 15);
         if (!validar_data(data)) {
-            printf("   [!] Data inválida! Tente novamente.\n");
+            printf("   [!] Data inválida!\n");
         }
     } while (!validar_data(data));
 
@@ -144,11 +148,7 @@ void menu_editar_cliente_view(Cliente *lista) {
         return;
     }
 
-    printf("\n>> Novos Dados (Pressione ENTER para manter o atual se preferir, ou digite o novo):\n");
-    // Nota: A lógica original substituía tudo. Para manter "enter para pular", 
-    // a lógica do model teria que mudar. Vou manter a substituição simples
-    // mas com texto mais amigável.
-    
+    printf("\n>> Novos Dados:\n");
     printf("Novo Nome: "); ler_texto(nome, 50);
     printf("Novo E-mail: "); ler_texto(email, 80);
     
@@ -160,7 +160,7 @@ void menu_editar_cliente_view(Cliente *lista) {
     printf("Novo Telefone: "); ler_texto(tel, 15);
 
     editar_cliente(lista, cpf, nome, email, data, tel);
-    printf("\n[v] Dados atualizados com sucesso!\n");
+    printf("\n[v] Dados atualizados!\n");
 }
 
 void menu_remover_cliente_view(Cliente **lista) {
@@ -176,35 +176,48 @@ void menu_remover_cliente_view(Cliente **lista) {
     }
 }
 
-// Menu Principal deste módulo
+// MENU DE GESTÃO DE CLIENTES
 void menu_gerenciar_clientes(Cliente **lista) {
     int opcao;
     do {
-        printf("\n==================================\n");
-        printf("      GESTÃO DE CLIENTES      \n");
-        printf("==================================\n");
+        limpar_tela(); // <--- Limpa antes de desenhar o menu
+
+        printf("\n=== GESTÃO DE CLIENTES ===\n");
         printf("1. Cadastrar Cliente\n");
         printf("2. Listar Clientes\n");
         printf("3. Editar Cliente\n");
         printf("4. Remover Cliente\n");
         printf("0. Voltar\n");
-        printf("==================================\n");
         printf("Escolha: ");
         scanf("%d", &opcao);
         getchar(); 
 
         switch(opcao) {
-            case 1: menu_cadastrar_cliente(lista); break;
-            case 2: listar_todos_clientes(*lista); break;
-            case 3: menu_editar_cliente_view(*lista); break;
-            case 4: menu_remover_cliente_view(lista); break;
+            case 1: 
+                menu_cadastrar_cliente(lista); 
+                esperar_enter(); // <--- Pausa para ver o resultado
+                break;
+            case 2: 
+                listar_todos_clientes(*lista); 
+                esperar_enter();
+                break;
+            case 3: 
+                menu_editar_cliente_view(*lista); 
+                esperar_enter();
+                break;
+            case 4: 
+                menu_remover_cliente_view(lista); 
+                esperar_enter();
+                break;
             case 0: break;
-            default: printf("   [!] Opção inválida!\n");
+            default: 
+                printf("Opção inválida!\n");
+                esperar_enter();
         }
     } while (opcao != 0);
 }
 
-// --- ESPAÇO DE GERENCIAMENTO DE PRODUTOS: Abraão Pereira Dias 202045384 --
+// --- MENUS DE PRODUTOS (ABRAÃO PEREIRA DIAS) ---
 
 void listar_todos_produtos(Produto *lista) {
     printf("\n==================================\n");
@@ -219,7 +232,7 @@ void listar_todos_produtos(Produto *lista) {
     while (atual != NULL) {
         printf(" ID:    %d\n", atual->codigo);
         printf(" Nome:  %s\n", atual->nome);
-        printf(" Preço: R$ %.2f  |  Qtd: %d\n", atual->preco, atual->quantidade);
+        printf(" Preço: R$ %.2f | Qtd: %d\n", atual->preco, atual->quantidade);
         printf("----------------------------------\n");
         atual = atual->prox; 
     }
@@ -229,54 +242,48 @@ void menu_cadastrar_produto(Produto **lista) {
     int codigo, quantidade;
     float preco;
     char nome[50];
-    char buffer_cod[20]; // Buffer para ler o código como string primeiro
+    char buffer_cod[20]; 
 
-    printf("\n==================================\n");
-    printf("        NOVO PRODUTO              \n");
-    printf("==================================\n");
-    printf("(Digite '0' no Código para cancelar)\n\n");
+    printf("\n--- NOVO PRODUTO (Digite 0 para Cancelar) ---\n");
     
     while (1) {
         printf("Código (ID): ");
-        // Lemos como texto primeiro para verificar se é "0"
-        ler_texto(buffer_cod, 20);
+        ler_texto(buffer_cod, 20); // Lê como texto primeiro
 
-        // Opção de Cancelar
         if (strcmp(buffer_cod, "0") == 0) {
             printf(">> Operação cancelada.\n");
             return;
         }
 
-        // Converte para int
         codigo = atoi(buffer_cod);
 
         if (codigo <= 0) {
-            printf("   [!] O código deve ser um número positivo.\n");
+            printf("   [!] Erro: Código inválido.\n");
             continue;
         }
 
         if (buscar_produto(*lista, codigo) != NULL) {
-            printf("   [!] Erro: Código já cadastrado! Tente outro.\n");
-            continue; // Pede o código de novo
+            printf("   [!] Erro: Código já cadastrado!\n");
+            return;
         }
 
-        break; // Sai do loop se válido
+        break;
     }
 
-    printf("Nome do Produto: ");
-    ler_texto(nome, 50); 
+    printf("Nome: ");
+    ler_texto(nome, 50);
 
-    printf("Preço (R$): ");
+    printf("Preço: ");
     scanf("%f", &preco);
 
-    printf("Quantidade em Estoque: ");
+    printf("Quantidade: ");
     scanf("%d", &quantidade);
-    getchar(); // Limpa buffer
+    getchar();
 
     if (adicionar_produto(lista, codigo, nome, preco, quantidade)) {
         printf("\n[v] Produto cadastrado com sucesso!\n");
     } else {
-        printf("\n[x] Erro: Falha ao cadastrar (Memória cheia).\n");
+        printf("\n[x] Erro: Falha ao cadastrar.\n");
     }
 }
 
@@ -296,19 +303,13 @@ void menu_editar_produto_view(Produto *lista) {
     }
 
     printf("\n>> Novos Dados:\n");
-    
-    printf("Novo Nome: ");
-    ler_texto(novo_nome, 50);
-
-    printf("Novo Preço (digite -1 para manter): ");
-    scanf("%f", &novo_preco);
-
-    printf("Nova Quantidade (digite -1 para manter): ");
-    scanf("%d", &nova_qtd);
+    printf("Novo Nome: "); ler_texto(novo_nome, 50);
+    printf("Novo Preço (digite -1 para manter): "); scanf("%f", &novo_preco);
+    printf("Nova Quantidade (digite -1 para manter): "); scanf("%d", &nova_qtd);
     getchar();
 
     if (editar_produto(lista, codigo, novo_nome, novo_preco, nova_qtd)) {
-        printf("\n[v] Dados do produto atualizados!\n");
+        printf("\n[v] Dados atualizados!\n");
     } else {
         printf("\n[x] Erro ao atualizar.\n");
     }
@@ -328,41 +329,55 @@ void menu_remover_produto_view(Produto **lista) {
     }
 }
 
-// Menu Principal do módulo de Produtos
+// MENU DE GESTÃO DE PRODUTOS
 void menu_gerenciar_produtos(Produto **lista) {
     int opcao;
     do {
-        printf("\n==================================\n");
-        printf("      GESTÃO DE PRODUTOS      \n");
-        printf("==================================\n");
+        limpar_tela(); // <--- Limpa a tela
+
+        printf("\n=== GESTÃO DE PRODUTOS ===\n");
         printf("1. Cadastrar Produto\n");
         printf("2. Listar Produtos\n");
         printf("3. Editar Produto\n");
         printf("4. Remover Produto\n");
         printf("0. Voltar\n");
-        printf("==================================\n");
         printf("Escolha: ");
         scanf("%d", &opcao);
-        getchar(); 
+        getchar();
 
         switch(opcao) {
-            case 1: menu_cadastrar_produto(lista); break;
-            case 2: listar_todos_produtos(*lista); break;
-            case 3: menu_editar_produto_view(*lista); break;
-            case 4: menu_remover_produto_view(lista); break;
+            case 1: 
+                menu_cadastrar_produto(lista); 
+                esperar_enter(); // <--- Pausa
+                break;
+            case 2: 
+                listar_todos_produtos(*lista); 
+                esperar_enter();
+                break;
+            case 3: 
+                menu_editar_produto_view(*lista); 
+                esperar_enter();
+                break;
+            case 4: 
+                menu_remover_produto_view(lista); 
+                esperar_enter();
+                break;
             case 0: break;
-            default: printf("   [!] Opção inválida!\n");
+            default: 
+                printf("Opção inválida!\n");
+                esperar_enter();
         }
     } while (opcao != 0);
 }
 
 // --- MENU PRINCIPAL DO SISTEMA ---
 void menu_principal(Cliente **lista_c, Produto **lista_p) {
-    // Tenta configurar acentos para terminais que suportam
-    setlocale(LC_ALL, "Portuguese");
+    setlocale(LC_ALL, "Portuguese"); // Ativa acentos
 
     int opcao;
     do {
+        limpar_tela(); // <--- Limpa a tela no menu principal também
+
         printf("\n##################################\n");
         printf("      SISTEMA DE VENDAS       \n");
         printf("##################################\n");
@@ -373,7 +388,7 @@ void menu_principal(Cliente **lista_c, Produto **lista_p) {
         printf("----------------------------------\n");
         printf("Escolha: ");
         scanf("%d", &opcao);
-        getchar(); // Limpar buffer
+        getchar(); 
 
         switch(opcao) {
             case 1:
@@ -384,12 +399,14 @@ void menu_principal(Cliente **lista_c, Produto **lista_p) {
                 break;
             case 3:
                 printf("\n>> Módulo de Vendas em desenvolvimento...\n");
+                esperar_enter();
                 break;
             case 0:
                 printf("\nEncerrando sistema... Até logo!\n");
                 break;
             default:
-                printf("\n[!] Opção inválida! Tente novamente.\n");
+                printf("\n[!] Opção inválida!\n");
+                esperar_enter();
         }
     } while (opcao != 0);
 }
