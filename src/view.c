@@ -344,7 +344,7 @@ void menu_vendas(Cliente **lista_c, Produto **lista_p) {
 
     Cliente *c = buscar_cliente(*lista_c, cpf);
     if (c == NULL) {
-        printf("%s[ERRO] Cliente nao encontrado!%s\n", COR_ERRO, COR_RESET);
+        printf("%s[ERRO] Cliente não encontrado!%s\n", COR_ERRO, COR_RESET);
         esperar_enter();
         return;
     }
@@ -362,7 +362,7 @@ void menu_vendas(Cliente **lista_c, Produto **lista_p) {
 
         switch(opcao) {
             case 1:
-                printf("Codigo do Produto: "); scanf("%d", &cod_prod);
+                printf("Código do Produto: "); scanf("%d", &cod_prod);
                 printf("Quantidade: "); scanf("%d", &qtd);
                 getchar(); // Consumir enter
                 ctrl_adicionar_item(*lista_c, *lista_p, cpf, cod_prod, qtd);
@@ -373,7 +373,7 @@ void menu_vendas(Cliente **lista_c, Produto **lista_p) {
                 esperar_enter();
                 break;
             case 3:
-                printf("Codigo do Produto a remover: "); scanf("%d", &cod_prod);
+                printf("Código do Produto a remover: "); scanf("%d", &cod_prod);
                 getchar();
                 ctrl_remover_item(*lista_c, *lista_p, cpf, cod_prod);
                 esperar_enter();
@@ -418,4 +418,5 @@ void menu_principal(Cliente **lista_c, Produto **lista_p) {
         }
     } while (opcao != 0);
 }
+
 
