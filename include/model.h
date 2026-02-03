@@ -1,15 +1,27 @@
+/* HEADER GUARD (Guarda de Cabeçalho)
+   #ifndef e #define evitam que este arquivo seja lido duas vezes 
+   pelo compilador, o que causaria erro de "redefinição de struct".
+*/
+
 #ifndef MODEL_H
 #define MODEL_H
 
-// Por que usar typedef aqui?
-// R: Para não precisar escrever "struct Cliente" toda vez, apenas "Cliente".
+/* STRUCT ITEMCARRINHO
+   Representa um nó da lista encadeada de compras DENTRO de um cliente.
+   Não guardamos o Produto inteiro aqui, apenas o código dele e a quantidade.
+   Isso economiza memória (referência em vez de cópia).
+*/
+
 typedef struct ItemCarrinho {
-    int codigo_produto;
-    int qtd_comprada;
-    struct ItemCarrinho *prox;
+    int codigo_produto; // Chave estrangeira (liga ao Produto)
+    int qtd_comprada; // Quantas unidades o cliente quer
+    struct ItemCarrinho *prox; // Ponteiro para o próximo item do carrinho
 } ItemCarrinho;
 
-// --- ESTRUTURAS ---
+/* STRUCT CLIENTE
+   Representa o nó da lista principal de clientes.
+   Note que é uma estrutura complexa: ela contém dados e UMA OUTRA LISTA (carrinho).
+*/
 
 typedef struct Cliente {
     char cpf[15];       
@@ -17,22 +29,28 @@ typedef struct Cliente {
     char email[80];    
     char data_nasc[15]; 
     char telefone[15];
-    ItemCarrinho *carrinho; 
-    struct Cliente *prox; // O que é isso? R: O ponteiro que liga este nó ao próximo da lista.
+    ItemCarrinho *carrinho; // Sub-lista encadeada: Cada cliente tem seu próprio "trem" de compras.
+    struct Cliente *prox; // Ponteiro para o próximo cliente (Elo da corrente principal).
 } Cliente;
 
+/* STRUCT PRODUTO
+   Lista encadeada simples para o estoque.
+*/
+
 typedef struct Produto{
-    int codigo; 
+    int codigo; // Identificador único (Primary Key)
     char nome[50]; 
     float preco; 
-    int quantidade; 
-    struct Produto *prox; 
+    int quantidade; // Estoque disponível
+    struct Produto *prox; // Elo para o próximo produto
 } Produto;
 
 // --- PROTÓTIPOS ---
 
 // Clientes
+// Usa ponteiro duplo (Cliente **lista) porque a lista pode mudar de endereço (ex: 1º inserção)
 void adicionar_cliente(Cliente **lista, char *cpf, char *nome, char *email, char *data_nasc, char *telefone);
+// Usa ponteiro simples (Cliente *lista) porque apenas LÊ a lista, não altera o início dela.
 Cliente* buscar_cliente(Cliente *lista, char *cpf);
 int remover_cliente(Cliente **lista, char *cpf);
 int editar_cliente(Cliente *lista, char *cpf, char *novo_nome, char *novo_email, char *nova_data, char *novo_telefone);
@@ -58,3 +76,4 @@ void salvar_dados(Cliente *lista_c, Produto *lista_p);
 void carregar_dados(Cliente **lista_c, Produto **lista_p);
 
 #endif
+
