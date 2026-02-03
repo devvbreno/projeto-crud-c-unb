@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/model.h" // Importa o seu contrato
+#include "../include/model.h"
 
 // --- IMPLEMENTAÇÃO DO GERENCIAMENTO DE CLIENTES: SAMUEL CAMPOS ROCHA - 211031824 ---
 
@@ -96,6 +96,7 @@ void liberar_lista_clientes(Cliente **lista) {
     *lista = NULL;
     // acrescentei limpar o carrinho de cada cliente
 }
+
 // ESPAÇO PARA GERENCIAMENTO DE PRODUTOS: Abraão Pereira Dias - 202045384 ---
 
 
@@ -156,12 +157,6 @@ int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco
     return 0; 
 }
 
-// A função remover_produto segue a mesma lógica de ponteiros do gerenciamento de clientes,
-// apenas trocando a comparação de strings (strcmp) pela comparação de inteiros (==).
-
-// para compilar o código ele pede as funções remover_produto e liberar_lista_produtpos
-
-// Gerenciamento do sistema - Modo Compra (Breno Elias)
 void liberar_lista_produtos(Produto **lista) {
     Produto *atual = *lista;
     while (atual != NULL) {
@@ -172,21 +167,67 @@ void liberar_lista_produtos(Produto **lista) {
     *lista = NULL;
 }
 
-void remover_produto(Produto **lista, int codigo) {
-    if (*lista == NULL) return;
-    Produto *atual = *lista, *anterior = NULL;
+int remover_produto(Produto **lista, int codigo) {
+    if (*lista == NULL) return 0; // Mudou de return; para return 0;
+
+    Produto *atual = *lista;
+    Produto *anterior = NULL;
 
     while (atual != NULL && atual->codigo != codigo) {
         anterior = atual;
         atual = atual->prox;
     }
 
-    if (atual == NULL) return;
+    if (atual == NULL) return 0;
 
-    if (anterior == NULL) *lista = atual->prox;
+    if (anterior == NULL) {
+        *lista = atual->prox;
+    } else {
+        anterior->prox = atual->prox;
+    }
+
+    free(atual);
+    return 1;
+}
+// Gerenciamento do sistema - Modo Compra (Breno Elias)
+
+int remover_do_carrinho(Cliente *cliente, int cod_prod, Produto *lista_produtos) {
+    if (cliente == NULL || cliente->carrinho == NULL) return 0;
+
+    ItemCarrinho *atual = cliente->carrinho;
+    ItemCarrinho *anterior = NULL;
+
+    while (atual != NULL && atual->codigo_produto != cod_prod) {
+        anterior = atual;
+        atual = atual->prox;
+    }
+
+    if (atual == NULL) return 0; // Produto não estava no carrinho
+
+    // 1. Devolve a quantidade ao estoque de produtos
+    Produto *p = buscar_produto(lista_produtos, cod_prod);
+    if (p != NULL) {
+        p->quantidade += atual->qtd_comprada;
+    }
+
+    // 2. Remove da lista encadeada do carrinho
+    if (anterior == NULL) cliente->carrinho = atual->prox;
     else anterior->prox = atual->prox;
 
     free(atual);
+    return 1;
+}
+
+void finalizar_compra(Cliente *cliente) {
+    if (cliente == NULL) return;
+    
+    ItemCarrinho *atual = cliente->carrinho;
+    while (atual != NULL) {
+        ItemCarrinho *temp = atual;
+        atual = atual->prox;
+        free(temp);
+    }
+    cliente->carrinho = NULL;
 }
 
 void liberar_sistema(Cliente **lista_c, Produto **lista_p) {

@@ -281,6 +281,56 @@ void menu_gerenciar_produtos(Produto **lista) {
     } while (opcao != 0);
 }
 
+void menu_vendas(Cliente **lista_c, Produto **lista_p) {
+    char cpf[15];
+    int opcao, cod_prod, qtd;
+
+    printf("\n--- MODO COMPRA ---\n");
+    printf("Informe o CPF do Cliente: ");
+    ler_texto(cpf, 15);
+
+    // Validação inicial via Model
+    Cliente *c = buscar_cliente(*lista_c, cpf);
+    if (c == NULL) {
+        printf("[ERRO] Cliente não encontrado!\n");
+        return;
+    }
+
+    do {
+        printf("\n=== CARRINHO DE %s ===\n", c->nome);
+        printf("1. Adicionar Produto\n");
+        printf("2. Ver Carrinho e Total\n");
+        printf("3. Retirar Produto\n");
+        printf("4. Finalizar Compra\n");
+        printf("0. Voltar\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+        getchar();
+
+        switch(opcao) {
+            case 1:
+                printf("Código do Produto: "); scanf("%d", &cod_prod);
+                printf("Quantidade: "); scanf("%d", &qtd);
+                // Chama o Controller para validar estoque e adicionar
+                ctrl_adicionar_item(*lista_c, *lista_p, cpf, cod_prod, qtd);
+                break;
+            case 2:
+                // Chama o Model para listar e somar
+                calcular_total_carrinho(c, *lista_p);
+                break;
+            case 3:
+                printf("Código do Produto a remover: "); scanf("%d", &cod_prod);
+                // Chama o Controller para gerenciar a retirada
+                ctrl_remover_item(*lista_c, *lista_p, cpf, cod_prod);
+                break;
+            case 4:
+                // Chama o Controller para fechar a conta
+                ctrl_finalizar_venda(*lista_c, cpf, *lista_p);
+                opcao = 0; // Sai do menu após finalizar
+                break;
+        }
+    } while (opcao != 0);
+}
 // --- MENU PRINCIPAL DO SISTEMA ---
 void menu_principal(Cliente **lista_c, Produto **lista_p) {
     int opcao;
@@ -290,7 +340,7 @@ void menu_principal(Cliente **lista_c, Produto **lista_p) {
         printf("==================================\n");
         printf("1. Gerenciar Clientes\n");
         printf("2. Gerenciar Produtos\n"); // <--- SUA PARTE AQUI
-        printf("3. Realizar Venda (Beta)\n");
+        printf("3. Carrinho de Compras\n");
         printf("0. Sair\n");
         printf("Escolha: ");
         scanf("%d", &opcao);
@@ -306,7 +356,7 @@ void menu_principal(Cliente **lista_c, Produto **lista_p) {
                 break;
             case 3:
                 printf("Modulo de Vendas em desenvolvimento...\n");
-                // Futuramente chamara: processar_compra(...);
+                menu_vendas(lista_c, lista_p);
                 break;
             case 0:
                 printf("Encerrando sistema...\n");
