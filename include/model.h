@@ -57,8 +57,11 @@ int editar_cliente(Cliente *lista, char *cpf, char *novo_nome, char *novo_email,
 void liberar_lista_clientes(Cliente **lista);
 
 // Produtos
+// Produtos - declaração de funções
+// Uso de ponteiro duplo para alterar o endereço, uso de ponteiro simples para ler a informação armazenada no byte
+
 int adicionar_produto(Produto **lista, int codigo, char *nome, float preco, int quantidade);
-void listar_produtos(Produto *lista); // [PROFESSOR] P: Por que aqui é *lista e no adicionar é **lista? R: Listar só lê, não altera onde a lista começa.
+void listar_produtos(Produto *lista); //Listar só lê, não altera onde a lista começa.
 Produto* buscar_produto(Produto *lista, int codigo);
 int remover_produto(Produto **lista, int codigo);
 int editar_produto(Produto *lista, int codigo, char *novo_nome, float novo_preco, int nova_qtd);
@@ -76,4 +79,5 @@ void salvar_dados(Cliente *lista_c, Produto *lista_p);
 void carregar_dados(Cliente **lista_c, Produto **lista_p);
 
 #endif
+
 
