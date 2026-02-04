@@ -6,18 +6,21 @@
 #include "../include/view.h"
 #include "../include/model.h"
 
-// --- CORES E FORMATAÇÃO ---
+
 #define COR_RESET   "\033[0m"
 #define COR_TITULO  "\033[1;36m" // Ciano Claro
 #define COR_MENU    "\033[1;37m" // Branco Brilhante
 #define COR_ERRO    "\033[1;31m" // Vermelho
 #define COR_SUCESSO "\033[1;32m" // Verde
 
-// --- FUNÇÕES AUXILIARES ---
+/* [PORTABILIDADE]
+       "Foram utilizadas diretivas de pré-processador (#ifdef) para identificar se o sistema é Windows ou Linux/Mac.
+       Isso garante que o comando de limpar tela (cls ou clear) funcione em qualquer sistema."
+*/
 
 void limpar_tela() {
     #ifdef _WIN32
-        system("cls");
+        system("cls");        
     #else
         system("clear");
     #endif
@@ -27,6 +30,12 @@ void esperar_enter() {
     printf("\n%s>> Pressione ENTER para continuar...%s", COR_MENU, COR_RESET);
     getchar();
 }
+
+/* [SEGURANÇA DE ENTRADA]
+   "Criamos essa função para substituir o 'scanf' na leitura de strings.
+   O 'scanf' para de ler no primeiro espaço (o que impede nomes compostos) e pode causar buffer overflow.
+   O 'fgets' resolve isso limitando o tamanho e lendo a linha toda."
+*/
 
 void ler_texto(char *buffer, int tamanho) {
     fgets(buffer, tamanho, stdin);
@@ -56,6 +65,10 @@ int validar_telefone(char *tel) {
     return 1;
 }
 
+/* [REGRAS REAIS PARA DATAS]
+   "A lógica do ano bissexto é necessária para validar datas como 29/02."
+*/
+
 int eh_bissexto(int ano) {
     return (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0);
 }
@@ -78,7 +91,7 @@ int validar_data(char *data) {
     return 1;
 }
 
-// --- GESTÃO DE CLIENTES ---
+// --- GESTÃO DE CLIENTES --- 
 
 void listar_todos_clientes(Cliente *lista) {
     printf("\n%s=== LISTA DE CLIENTES ===%s\n", COR_TITULO, COR_RESET);
@@ -86,6 +99,7 @@ void listar_todos_clientes(Cliente *lista) {
         printf(">> Nenhum cliente cadastrado.\n");
         return;
     }
+    // Percorre a lista encadeada imprimindo os nós
     Cliente *atual = lista;
     while (atual != NULL) {
         printf(" CPF:   %s | Nome: %s\n", atual->cpf, atual->nome);
@@ -100,6 +114,11 @@ void menu_cadastrar_cliente(Cliente **lista) {
     char cpf[15], nome[50], email[80], data[15], tel[15];
 
     printf("\n%s--- NOVO CLIENTE (0 para Sair) ---%s\n", COR_TITULO, COR_RESET);
+
+/* [UX - ROBUSTEZ] Loop "While(1)"
+       "O usuário fica preso neste loop até digitar um CPF válido (11 dígitos numéricos).
+       Isso impede que dados sujos cheguem até a camada Model."
+*/
 
     while (1) {
         printf("CPF (11 digitos): ");
@@ -196,6 +215,12 @@ void menu_gerenciar_clientes(Cliente **lista) {
         printf("4. Remover Cliente\n");
         printf("0. Voltar\n");
         printf("Escolha: ");
+/* [LIMPEZA DE BUFFER]
+           "Quando lemos um número com scanf, o 'Enter' (\n) sobra no buffer do teclado.
+           Se não usarmos o getchar() para consumir esse Enter, a próxima leitura de string (fgets)
+           vai ler uma linha vazia e pular a vez do usuário."
+*/
+        
         scanf("%d", &opcao);
         getchar();
 
@@ -256,7 +281,7 @@ void menu_cadastrar_produto(Produto **lista) {
     printf("Nome: "); ler_texto(nome, 50);
     printf("Preço: "); scanf("%f", &preco);
     printf("Quantidade: "); scanf("%d", &quantidade);
-    getchar(); // Consumir enter
+    getchar(); 
 
     if (adicionar_produto(lista, codigo, nome, preco, quantidade)) {
         printf("\n%s[v] Produto cadastrado!%s\n", COR_SUCESSO, COR_RESET);
@@ -411,12 +436,17 @@ void menu_principal(Cliente **lista_c, Produto **lista_p) {
             case 2: menu_gerenciar_produtos(lista_p); break;
             case 3: menu_vendas(lista_c, lista_p); break;
             case 0: 
-                salvar_dados(*lista_c, *lista_p); 
+                salvar_dados(*lista_c, *lista_p);
+                /* [PERSISTÊNCIA]
+                   Garante que os dados são salvos no arquivo 'database.txt' ao sair.
+                */
+                
                 printf("\nEncerrando...\n"); 
                 break;
             default: printf("\nOpcao invalida!\n"); esperar_enter();
         }
     } while (opcao != 0);
 }
+
 
 
