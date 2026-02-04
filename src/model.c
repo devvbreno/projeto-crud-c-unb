@@ -116,12 +116,15 @@ void liberar_lista_clientes(Cliente **lista) {
 }
 
 // --- IMPLEMENTAÇÃO PRODUTOS ---
+/*Usamos ponteiro duplo (**lista) porque se a lista estiver vazia, 
+precisamos alterar o endereço do ponteiro original na main.
+A busca prévia evita duplicidade de IDs (Chave Primária).*/ 
 
 int adicionar_produto(Produto **lista, int codigo, char *nome, float preco, int quantidade) {
     if (buscar_produto(*lista, codigo) != NULL) return 0; 
 
-    Produto *novo = (Produto*) malloc(sizeof(Produto));
-    if (novo == NULL) return 0; 
+    Produto *novo = (Produto*) malloc(sizeof(Produto));// Alocação Dinâmica: Pedimos memória na Heap para um novo nó
+    if (novo == NULL) return 0; // Caso o no esteja ocupado retorna erro tipo NULL
 
     novo->codigo = codigo;
     strcpy(novo->nome, nome);
@@ -339,5 +342,6 @@ void carregar_dados(Cliente **lista_c, Produto **lista_p) {
     fclose(arquivo);
     printf("[SISTEMA] Dados carregados do disco.\n");
 }
+
 
 
