@@ -5,23 +5,30 @@
 
 // --- IMPLEMENTAÇÃO CLIENTES ---
 
+// Adiciona um cliente SEMPRE NO FINAL da lista (ordem de cadastro)
 void adicionar_cliente(Cliente **lista, char *cpf, char *nome, char *email, char *data_nasc, char *telefone) {
-    // [PROFESSOR] P: O que acontece nessa linha?
-    // R: Pedimos ao sistema operacional um bloco de memória do tamanho da struct Cliente.
-    Cliente *novo = (Cliente*) malloc(sizeof(Cliente));
-    if (novo == NULL) return; // Falha de memória crítica
 
+    // 1. ALOCAÇÃO DE MEMÓRIA
+    // Pedimos ao sistema operacional um bloco de memória do tamanho da struct Cliente.
+    Cliente *novo = (Cliente*) malloc(sizeof(Cliente));
+    if (novo == NULL) return; // Validação de segurança: Se a RAM estiver cheia, malloc retorna NULL.
+
+    // 2. PREENCHIMENTO DOS DADOS
+    // Copiamos as strings (char array) para dentro da struct.
     strcpy(novo->cpf, cpf);
     strcpy(novo->nome, nome);
     strcpy(novo->email, email);
     strcpy(novo->data_nasc, data_nasc);
     strcpy(novo->telefone, telefone);
-    novo->prox = NULL;
-    novo->carrinho = NULL; 
 
-    // [PROFESSOR] P: Como funciona essa inserção?
-    // R: Se a lista for vazia, o novo é o primeiro. Se não, percorremos até o fim (NULL) e ligamos lá.
+    // Inicializa os ponteiros internos
+    novo->prox = NULL; // Ele será o último, então não aponta pra ninguém.
+    novo->carrinho = NULL; // Cliente nasce com o carrinho vazio.
+
+    // 3. INSERÇÃO NA LISTA ENCADEADA
+    // CASO 1: A lista está vazia?
     if (*lista == NULL) {
+        // O ponteiro principal (da main) passa a apontar para este novo cliente.
         *lista = novo; 
     } else {
         Cliente *atual = *lista;
@@ -321,3 +328,4 @@ void carregar_dados(Cliente **lista_c, Produto **lista_p) {
     fclose(arquivo);
     printf("[SISTEMA] Dados carregados do disco.\n");
 }
+
