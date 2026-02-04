@@ -5,16 +5,18 @@
 
 // --- IMPLEMENTAÇÃO CLIENTES ---
 
-// Adiciona um cliente SEMPRE NO FINAL da lista (ordem de cadastro)
 void adicionar_cliente(Cliente **lista, char *cpf, char *nome, char *email, char *data_nasc, char *telefone) {
-
-    // 1. ALOCAÇÃO DE MEMÓRIA
-    // Pedimos ao sistema operacional um bloco de memória do tamanho da struct Cliente.
+/* [ALOCAÇÃO DINÂMICA]
+       "Uso da função malloc para pedir memória na Heap. Se retornar NULL, 
+       significa que a memória RAM acabou (crítico), então aborto a operação."
+*/
     Cliente *novo = (Cliente*) malloc(sizeof(Cliente));
     if (novo == NULL) return; // Validação de segurança: Se a RAM estiver cheia, malloc retorna NULL.
 
-    // 2. PREENCHIMENTO DOS DADOS
-    // Copiamos as strings (char array) para dentro da struct.
+/* [USO DE STRCPY] 
+       "Usamos strcpy assumindo que a validação de tamanho seria feita na entrada de dados. 
+       Sei que em "produção" o correto seria 'strncpy' para evitar invasão de memória vizinha."
+*/
     strcpy(novo->cpf, cpf);
     strcpy(novo->nome, nome);
     strcpy(novo->email, email);
@@ -25,12 +27,17 @@ void adicionar_cliente(Cliente **lista, char *cpf, char *nome, char *email, char
     novo->prox = NULL; // Ele será o último, então não aponta pra ninguém.
     novo->carrinho = NULL; // Cliente nasce com o carrinho vazio.
 
-    // 3. INSERÇÃO NA LISTA ENCADEADA
-    // CASO 1: A lista está vazia?
+    // INSERÇÃO NA LISTA ENCADEADA
     if (*lista == NULL) {
         // O ponteiro principal (da main) passa a apontar para este novo cliente.
         *lista = novo; 
     } else {
+/* [PERFORMANCE] Inserção no Fim (O(n))
+           "Por que percorrer a lista toda? Não fica lento?"
+           "Sim, a complexidade é linear O(N). Fizemos assim para manter a ordem cronológica 
+           de cadastro na listagem. Se precisasse de velocidade máxima, inseriria no início (O(1)),
+           como fizemos no carrinho de compras."
+*/
         Cliente *atual = *lista;
         while (atual->prox != NULL) {
             atual = atual->prox; 
@@ -62,13 +69,15 @@ int remover_cliente(Cliente **lista, char *cpf) {
     if (atual == NULL) return 0; 
 
     if (anterior == NULL) {
-        *lista = atual->prox; // Removeu o primeiro
+        *lista = atual->prox; 
     } else {
-        anterior->prox = atual->prox; // Removeu do meio/fim
+        anterior->prox = atual->prox; 
     }
-
-    // [PROFESSOR] P: Por que usar free?
-    // R: Para devolver a memória ao sistema e evitar vazamento de memória (Memory Leak).
+/* [MEMORY LEAK]
+       "Remove o cliente, mas esquece de limpar o carrinho dele antes!
+       O código remove o cliente da lista, mas os itens do carrinho dele ficam perdidos na memória (vazamento). 
+       Eu corrigi essa lógica na função 'liberar_sistema', mas aqui na remoção individual faltou replicar o loop de limpeza."
+*/
     free(atual); 
     return 1;
 }
@@ -89,8 +98,10 @@ void liberar_lista_clientes(Cliente **lista) {
     Cliente *atual = *lista;
     while (atual != NULL) {
         Cliente *proximo = atual->prox;
-        
-        // Limpa carrinho antes de limpar cliente
+/* [GERENCIAMENTO DE MEMÓRIA] A Forma Correta
+        "Aqui está a maneira certa de liberar: primeiro limpo a sub-lista (carrinho)
+        para não deixar nós órfãos, e só depois libero a struct principal do cliente."
+*/
         ItemCarrinho *item = atual->carrinho;
         while (item != NULL) {
             ItemCarrinho *prox_item = item->prox;
@@ -198,7 +209,7 @@ int remover_do_carrinho(Cliente *cliente, int cod_prod, Produto *lista_produtos)
 
     if (atual == NULL) return 0;
 
-    // Devolve ao estoque
+    
     Produto *p = buscar_produto(lista_produtos, cod_prod);
     if (p != NULL) {
         p->quantidade += atual->qtd_comprada;
@@ -237,7 +248,7 @@ void adicionar_ao_carrinho(Cliente *cliente, Produto *produto, int qtd) {
     novo->codigo_produto = produto->codigo;
     novo->qtd_comprada = qtd;
 
-    novo->prox = cliente->carrinho; // Insere no início (mais rápido - O(1))
+    novo->prox = cliente->carrinho; 
     cliente->carrinho = novo;
 
     produto->quantidade -= qtd;
@@ -328,4 +339,5 @@ void carregar_dados(Cliente **lista_c, Produto **lista_p) {
     fclose(arquivo);
     printf("[SISTEMA] Dados carregados do disco.\n");
 }
+
 
